@@ -1,0 +1,27 @@
+{
+  "name": "sui-watcher",
+  "version": "1.0.0",
+  "description": "Application to monitor a Sui Node and send alerts in case of failures.",
+  "main": "run.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/laine-sa/sui-watcher.git"
+  },
+  "author": "",
+  "license": "GNU GPL v3",
+  "bugs": {
+    "url": "https://github.com/laine-sa/sui-watcher/issues"
+  },
+  "homepage": "https://github.com/laine-sa/sui-watcher#readme",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "dotenv": "^16.3.1",
+    "log4js": "^6.9.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.4.1"
+  }
+}
