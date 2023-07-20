@@ -25,7 +25,7 @@ export class Notifier  {
     }
 
     public async monitor(failures: Failure[]): Promise<void> {
-        this.logger.trace('Beginning notify loop')
+        this.logger.info('Notifier running')
         failures.every((failure,i) => {
             if(!failure.notified && !failure.resolved && failure.count >= ALERT_THRESHOLD) {
                 let failure_message = failure.message
@@ -78,15 +78,18 @@ export class Notifier  {
             channel_count++
         }
             
-        if(channel_count > 0)
+        if(channel_count > 0) {
             this.logger.info('Notifier registered '+channel_count+' notification channels')
+            // Send a notification to all channels that the notifier has started - exclude PagerDuty as this is not a critical notification
+            this.send_notifications('SUI Watcher started for '+this.target+' and registered '+channel_count+' notification channels', [], 0, false, true)
+        }
         else
             this.logger.warn('Notifier registered no notification channels')
     }
 
-    private send_notifications(message: string, failures: Failure[], index: number, resolve: boolean): void {
+    private send_notifications(message: string, failures: Failure[], index: number, resolve: boolean, non_critical: boolean = false): void {
         if(this.channels.slack!=undefined) this.notify_slack(message)
-        if(this.channels.pagerduty!=undefined) this.notify_pagerduty(message, failures, index, resolve)
+        if(this.channels.pagerduty!=undefined && !non_critical) this.notify_pagerduty(message, failures, index, resolve)
         if(this.channels.telegram!=undefined) this.notify_telegram(message)
     }
 

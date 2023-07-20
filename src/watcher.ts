@@ -37,7 +37,7 @@ export class Watcher {
     // Main watch function loop that compares metrics values and pushes failures/resolutions
     public watch(): void {
 
-        this.logger.trace('Beginning watch loop')
+        this.logger.info('Watching for failures')
 
         // Iterate the various tests/values
         if(this.previous_metrics !== null && this.metrics !== null) {
@@ -73,9 +73,6 @@ export class Watcher {
     // This function fetches the metrics, handles test scenario and updates class properties that hold the data
     // Aside from failures on the defined metrics this function can trigger a failure on connection failure/timeout
     private async fetch_metrics(): Promise<void> {
-
-        this.logger.trace('Beginning fetch metrics loop')
-
         if(process.env.TEST_METRICS != undefined && !JSON.parse(process.env.TEST_METRICS)) {
             if(this.target !== null) {
 
