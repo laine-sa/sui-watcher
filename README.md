@@ -16,6 +16,10 @@ Requires `ts-node` in your PATH/installed globally.
 
 Copy the `.env.sample` file to `.env` and adjust appropriately.
 
+Default Log Level is INFO, you can amend this in the `.env` file or specify it as an environment variable while running manually, e.g. `LOG_LEVEL=trace ts-node run.ts`
+
+You need to specify at least one notification channel in order to receive alerts.
+
 # Notification Channels
 
 Sui-Watcher supports a variety of notification channels, including Slack, PagerDuty and Telegram.
