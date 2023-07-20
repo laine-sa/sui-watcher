@@ -6,5 +6,5 @@ export enum Metric {
     certificates_committed,
     highest_known_checkpoint,
     highest_synced_checkpoint,
-    highest_verified_checkpoint,
+    highest_verified_checkpoint
 }

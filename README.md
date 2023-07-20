@@ -4,6 +4,10 @@ This application is intended to run on an indepdent high-reliability host (e.g. 
 
 # Run Sui Watcher
 
+## Requirements
+
+Clone the git repository and run `npm i`. Set up the `.env` file based on the sample provided.
+
 Requires `ts-node` in your PATH/installed globally.
 
 ```ts-node run.ts```

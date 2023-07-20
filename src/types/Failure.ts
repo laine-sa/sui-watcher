@@ -9,4 +9,5 @@ export type Failure = {
     count: number,
     notified: boolean,
     resolved: boolean
+    resolution_notified: boolean
 }
