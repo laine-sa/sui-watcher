@@ -12,6 +12,16 @@ Requires `ts-node` in your PATH/installed globally.
 
 ```ts-node run.ts```
 
+### Backround service with pm2
+
+For continuous background operation we recommend using pm2, a process manager for node.js. Ensure you first follow the prior pre-requsities for global `ts-node` and configure your `.env` file.
+
+You can then use the pm2-start.sh script in this repo to run the service:
+
+```pm2 start sui-watcher.sh```
+
+You can check that the sui-watcher is running either by tailing the log file or with `pm2 status`. If you've made changes and need to restart use `pm2 restart sui-watcher`
+
 ## Configurable parameters
 
 Copy the `.env.sample` file to `.env` and adjust appropriately.
@@ -43,3 +53,7 @@ Sui-Watcher will create incidents on PagerDuty as well as resolve them when it d
 Use the `Botfather` bot on Telegram to create your own Telegram bot. You can give it any name. If you have an existing bot you an use that too, you just need the bot token which you then specify in the `.env` file.
 
 You also need your chat ID. The easiest way to find it is by searching Telegram for the `RawDataBot`, then clicking or typing `/start`. The bot will return some raw data about your Telegram account including the chat ID (labelled `id` under the `chat` object, before your name). This also needs to be added to the `.env` file.
+
+## Logging
+
+Sui-watcher defaults to the INFO log level. You can amend this up/down to ERROR, WARN, DEBUG or TRACE. Logs are printed to STDOUT as well as `log/sui-watcher.log`. If you are using pm2 you won't see logs on stdout but can tail the log file. Logs will rotate when they reach 100M and 3 backups will be kept.

@@ -7,7 +7,7 @@ const is_pm2 = (process.env.PM2 != undefined && process.env.PM2) ? true : false
 const log_appenders = (process.env.LOG_STDOUT != undefined && !JSON.parse(process.env.LOG_STDOUT)) ? ["sui_watcher"] : ["sui_watcher", "out"]
 
 log4js.configure({
-    appenders: { sui_watcher: { type: "file", filename: "log/sui-watcher.log", maxLogSize: '100M', backups: 7 }, out: {type: "stdout"} },
+    appenders: { sui_watcher: { type: "file", filename: "log/sui-watcher.log", maxLogSize: '100M', backups: 3 }, out: {type: "stdout"} },
     categories: { default: { appenders: log_appenders, level: log_level } },
     pm2: is_pm2
 });
