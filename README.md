@@ -16,9 +16,9 @@ Requires `ts-node` in your PATH/installed globally.
 
 For continuous background operation we recommend using pm2, a process manager for node.js. Ensure you first follow the prior pre-requsities for global `ts-node` and configure your `.env` file.
 
-You can then use the pm2-start.sh script in this repo to run the service:
+You can then use the script in the pm2 directory of this repo to run the service:
 
-```pm2 start sui-watcher.sh```
+```pm2 start pm2/sui-watcher.sh```
 
 You can check that the sui-watcher is running either by tailing the log file or with `pm2 status`. If you've made changes and need to restart use `pm2 restart sui-watcher`
 
