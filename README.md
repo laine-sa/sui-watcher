@@ -20,6 +20,10 @@ Default Log Level is INFO, you can amend this in the `.env` file or specify it a
 
 You need to specify at least one notification channel in order to receive alerts.
 
+# Testing alerts
+
+You can set `TEST_METRICS=true` and `TEST_FAIL=true` to simulate a failure (or set an invalid target URL to simulate a network connection failure). Additionally specify `TEST_RECOVERY=true` to simulate a recovery after the simulated failure (you may want to reduce the loop times in the .env file to accelerate this, e.g. set watch & notify loop to 5000)
+
 # Notification Channels
 
 Sui-Watcher supports a variety of notification channels, including Slack, PagerDuty and Telegram.
