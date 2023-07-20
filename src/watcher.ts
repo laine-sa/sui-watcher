@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Notifier } from './notifier'
+import { ALERT_THRESHOLD, Notifier } from './notifier'
 import { Failure } from './types/Failure'
 import { WatcherConstructorParams } from './types/WatcherConstructorParams'
 import * as log4js from 'log4js'
@@ -25,6 +25,7 @@ export class Watcher {
         this.notifier = new Notifier({logger: params.logger})
 
         this.logger.info('Initializing watcher with target: '+this.target)
+        if(process.env.TEST_METRICS != undefined && JSON.parse(process.env.TEST_METRICS)) this.logger.warn('Watcher is running in test mode')
 
         // This function runs async in a loop, fetches and updates metrics to this.metrics and this.previous_metrics
         this.fetch_metrics()
@@ -72,6 +73,9 @@ export class Watcher {
     // This function fetches the metrics, handles test scenario and updates class properties that hold the data
     // Aside from failures on the defined metrics this function can trigger a failure on connection failure/timeout
     private async fetch_metrics(): Promise<void> {
+
+        this.logger.trace('Beginning fetch metrics loop')
+
         if(process.env.TEST_METRICS != undefined && !JSON.parse(process.env.TEST_METRICS)) {
             if(this.target !== null) {
 
@@ -93,13 +97,16 @@ export class Watcher {
                         this.repeat_fetch_metrics()
                     })
                     .catch(error => {
+                        this.logger.trace('Axios Connection Error:')
+                        this.logger.trace(error)
+
                         let error_value = 'Unknown'
                         
                         if (error.response) {
                             error_value = error.reponse.status+' '+error.response.data
                             
                             } else if (error.request) {
-                            error_value = error.request
+                            error_value = error.code
                           } else {
                             error_value = error.message
                           }
@@ -109,7 +116,7 @@ export class Watcher {
                             last_observed: new Date(),
                             end: null,
                             type: 'metrics_connection_error',
-                            message: error_value,
+                            message: 'Unable to fetch metrics: '+error_value,
                             count: 0,
                             notified: false,
                             resolved: false,
@@ -159,9 +166,16 @@ export class Watcher {
 
         let split = metrics.split(/\r?\n/)
 
-        let test_increment = (is_test && process.env.TEST_FAIL != undefined && !JSON.parse(process.env.TEST_FAIL))
-            ?   this.test_counter
-            : 0
+        let test_increment = 0
+        
+        if(is_test && process.env.TEST_FAIL != undefined && !JSON.parse(process.env.TEST_FAIL)) {
+            test_increment = this.test_counter
+        }
+        else if(is_test && process.env.TEST_FAIL != undefined && JSON.parse(process.env.TEST_FAIL)) {
+            if(process.env.TEST_RECOVERY != undefined && JSON.parse(process.env.TEST_RECOVERY) && this.test_counter > ALERT_THRESHOLD*2) {
+            test_increment = this.test_counter
+            }
+        }
         this.test_counter++
         if(is_test) this.logger.trace('Test increment value is '+test_increment)
 
@@ -220,6 +234,8 @@ export class Watcher {
             return false
         })
         if(match != undefined) {
+            this.logger.info('Watcher detected a resolution on '+type)
+
             let index = this.failures.indexOf(match)
             this.failures[index] = {
                 start: match.start,

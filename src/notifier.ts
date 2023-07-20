@@ -6,7 +6,7 @@ import { NotifierChannels } from './types/NotifierChannels'
 require('dotenv').config()
 
 const DEFAULT_NOTIFIER_MONITOR_REFRESH_INTERVAL: number = 10000 // 10 seconds
-const ALERT_THRESHOLD: number = (process.env.FAILURE_COUNT_ALERT_THRESHOLD!=undefined) ? parseInt(process.env.FAILURE_COUNT_ALERT_THRESHOLD) : 4
+export const ALERT_THRESHOLD: number = (process.env.FAILURE_COUNT_ALERT_THRESHOLD!=undefined) ? parseInt(process.env.FAILURE_COUNT_ALERT_THRESHOLD) : 4
 
 export class Notifier  {
     private logger: log4js.Logger
@@ -17,19 +17,36 @@ export class Notifier  {
 
     public constructor(params: NotifierConstructorParams) {
         this.logger = params.logger
+        this.logger.info('Initializing Notifier')
+
         this.register_channels()
     }
 
     public async monitor(failures: Failure[]): Promise<void> {
-        this.logger.trace('Notifier loop start')
+        this.logger.trace('Beginning notify loop')
         failures.every((failure,i) => {
             if(!failure.notified && !failure.resolved && failure.count >= ALERT_THRESHOLD) {
-                this.send_notifications(
-                    failure.message
-                    +'\r\n'+
-                    'First observed: '+failure.start+'\r\n'+
-                    'Last observed: '+failure.last_observed+' ('+failure.count+' times)'
-                    )
+                let failure_message = failure.message
+                +'\r\n'+
+                'First observed: '+failure.start+'\r\n'+
+                'Last observed: '+failure.last_observed+' ('+failure.count+' times)'
+
+                this.logger.info('Notifier sending failure: '+failure_message)
+                this.send_notifications(failure_message)
+
+                failures[i].notified = true
+            }
+            else if(failure.notified && failure.resolved && !failure.resolution_notified) {
+                let resolution_message = 'ALL CLEAR - Resolution on '+failure.type
+                +'\r\n'+
+                'First observed: '+failure.start+'\r\n'+
+                'Last observed: '+failure.last_observed+' ('+failure.count+' times)\r\n'+
+                'Resolved: '+failure.end
+
+                this.logger.info('Notifier sending resolution: '+resolution_message)
+                this.send_notifications(resolution_message)
+
+                failures[i].resolution_notified = true
             }
         })
         this.repeat_monitor(failures)
@@ -41,11 +58,20 @@ export class Notifier  {
 
     // Check which notification channels are set in the environment and record these
     private register_channels(): void {
-        if(process.env.SLACK_WEBHOOK !== undefined && process.env.SLACK_WEBHOOK!='') 
+        let channel_count = 0
+        if(process.env.SLACK_WEBHOOK !== undefined && process.env.SLACK_WEBHOOK!='') {
             this.channels.slack = process.env.SLACK_WEBHOOK
-        if(process.env.PAGERDUTY_INTEGRATION_KEY !== undefined && process.env.PAGERDUTY_INTEGRATION_KEY!='') 
+            channel_count++
+        }
+        if(process.env.PAGERDUTY_INTEGRATION_KEY !== undefined && process.env.PAGERDUTY_INTEGRATION_KEY!='') {
             this.channels.pagerduty = process.env.PAGERDUTY_INTEGRATION_KEY
-        
+            channel_count++
+        }
+            
+        if(channel_count > 0)
+            this.logger.info('Notifier registered '+channel_count+' notification channels')
+        else
+            this.logger.warn('Notifier registered no notification channels')
     }
 
     private send_notifications(message: string): void {
@@ -61,6 +87,12 @@ export class Notifier  {
                 headers: {
                 'Content-Type': 'application/json'
                 }
+            })
+            .then((response) => {
+                this.logger.trace('Notifier notified Slack')
+            })
+            .catch((error) => {
+                this.logger.error('Notifier failed to notify Slack: '+error)
             })
         }
     }
