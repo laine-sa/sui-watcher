@@ -2,8 +2,6 @@
 
 This application is intended to run on an indepdent high-reliability host (e.g. a VPS) in order to monitor a Sui Validator node. In case of failures it can alert via Slack, Telegram or PagerDuty.
 
-# Sui Watcher
-
 ## Running
 
 Clone the git repository and run `npm i`. Set up the `.env` file based on the sample provided.
