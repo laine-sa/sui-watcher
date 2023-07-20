@@ -4,6 +4,8 @@ This application is intended to run on an indepdent high-reliability host (e.g. 
 
 ## Running
 
+Requires a relatively new version of node.js as well as global ts-node and typescript (`npm i -g ts-node` and `npm i -g typescript`)
+
 Clone the git repository and run `npm i`. Set up the `.env` file based on the sample provided.
 
 Requires `ts-node` in your PATH/installed globally.
