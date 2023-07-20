@@ -22,7 +22,7 @@ export class Watcher {
     public constructor(params: WatcherConstructorParams) {
         this.target = params.target
         this.logger = params.logger
-        this.notifier = new Notifier({logger: params.logger})
+        this.notifier = new Notifier({logger: params.logger, target: params.target})
 
         this.logger.info('Initializing watcher with target: '+this.target)
         if(process.env.TEST_METRICS != undefined && JSON.parse(process.env.TEST_METRICS)) this.logger.warn('Watcher is running in test mode')
@@ -97,8 +97,6 @@ export class Watcher {
                         this.repeat_fetch_metrics()
                     })
                     .catch(error => {
-                        this.logger.trace('Axios Connection Error:')
-                        this.logger.trace(error)
 
                         let error_value = 'Unknown'
                         

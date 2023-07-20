@@ -1,4 +1,8 @@
 export type NotifierChannels = {
-    slack: string|null,
-    pagerduty: string|null
+    slack?: string,
+    pagerduty?: string,
+    telegram?: {
+        token: string,
+        chat_id: string
+    }
 }

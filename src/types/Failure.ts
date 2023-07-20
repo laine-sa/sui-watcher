@@ -8,6 +8,6 @@ export type Failure = {
     message: string,
     count: number,
     notified: boolean,
-    resolved: boolean
+    resolved: boolean,
     resolution_notified: boolean
 }
