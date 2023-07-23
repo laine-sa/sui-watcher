@@ -45,7 +45,9 @@ export class Watcher {
 
         // Iterate the various tests/values
         if(this.previous_metrics !== null && this.metrics !== null) {
-            this.metrics.every((value, i) => {
+            this.metrics.forEach((value, i) => {
+                if(this.previous_metrics!=null) this.logger.trace('Comparing '+value.name+' with previous value of '+this.previous_metrics[i].name)
+                if(this.previous_metrics!=null) this.logger.trace('Comparing '+value.value+' with previous value of '+this.previous_metrics[i].value)
                 if(this.previous_metrics !== null && value.value <= this.previous_metrics[i].value) {
                     this.logger.trace('Watcher detected a failure on '+value.name)
 
@@ -91,7 +93,8 @@ export class Watcher {
 
                             this.previous_metrics = this.metrics
                             this.metrics = this.parse_metrics(response.data)
-                            this.logger.trace(this.metrics)
+                            
+                            this.logger.trace('Latest metrics: '+JSON.stringify(this.metrics)+'\r\nPrevious metrics: '+JSON.stringify(this.previous_metrics))
                         }
                     })
                     .then(() => {
@@ -182,6 +185,10 @@ export class Watcher {
             if(parsed.length == Object.values(Metric).length) return false;
 
             let metric = line.split(' ')
+
+            // Special casing for metrics that have a label
+            if(metric[0] == 'authority_state_execute_certificate_latency_count{tx_type="shared_object"}') metric[0] = 'authority_state_execute_certificate_latency_count_shared'
+            else if(metric[0] == 'authority_state_execute_certificate_latency_count{tx_type="single_writer"}' ) metric[0] = 'authority_state_execute_certificate_latency_count_single_writer'
 
             if(Object.values(Metric).includes(metric[0])) {
                 parsed.push({
