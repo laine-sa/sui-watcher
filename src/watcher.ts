@@ -34,6 +34,10 @@ export class Watcher {
         this.notifier.monitor(this.failures)
     }
 
+    public stop(): void {
+        this.notifier.notify_stop()
+    }
+
     // Main watch function loop that compares metrics values and pushes failures/resolutions
     public watch(): void {
 

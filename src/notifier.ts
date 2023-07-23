@@ -24,6 +24,10 @@ export class Notifier  {
         this.register_channels()
     }
 
+    public notify_stop(): void {
+        this.send_notifications('SUI Watcher stopped for '+this.target, [], 0, false, true)
+    }
+
     public async monitor(failures: Failure[]): Promise<void> {
         this.logger.info('Notifier running')
         failures.every((failure,i) => {

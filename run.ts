@@ -1,6 +1,8 @@
 import { Watcher } from './src/watcher'
 import * as log4js from 'log4js'
 require('dotenv').config()
+const validUrl = require('valid-url')
+
 
 const log_level = (process.env.LOG_LEVEL != undefined) ? process.env.LOG_LEVEL : 'error'
 const is_pm2 = (process.env.PM2 != undefined && process.env.PM2) ? true : false
@@ -16,6 +18,11 @@ const swlogger = log4js.getLogger("swlogger")
 
 if(process.env.TARGET == undefined) {
     swlogger.error('No target defined, shutting down.')
+    process.exit()
+}
+else if (!validUrl.isUri(process.env.TARGET)) {
+    swlogger.error('Target is not a valid URL, shutting down.')
+    process.exit()
 }
 else {
 
@@ -25,4 +32,9 @@ else {
     })
     
     watcher.watch()
+
+    process.on('SIGINT', function() {
+        watcher.stop()
+        setTimeout(() => process.exit(), 1000)
+     })
 }
