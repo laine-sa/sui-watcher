@@ -1,6 +1,6 @@
 {
   "name": "sui-watcher",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Application to monitor a Sui Node and send alerts in case of failures.",
   "main": "run.ts",
   "scripts": {
