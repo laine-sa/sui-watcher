@@ -16,11 +16,16 @@ Requires `ts-node` in your PATH/installed globally.
 
 For continuous background operation we recommend using pm2, a process manager for node.js. Ensure you first follow the prior pre-requsities for global `ts-node` and configure your `.env` file.
 
+To allow for multiple targets modify the pm2 config files on the `pm2` directory, e.g. `pm2/mainnet.config.js` to specify the correct TARGET.
+
 You can then use the script in the pm2 directory of this repo to run the service:
 
-```pm2 start pm2/sui-watcher.sh```
+```pm2 start pm2/mainnet.config.js```
+```pm2 start pm2/testnet.config.js```
 
-You can check that the sui-watcher is running either by tailing the log file or with `pm2 status`. If you've made changes and need to restart use `pm2 restart sui-watcher`
+You can check that the sui-watcher is running either by tailing the log file or with `pm2 status` - you should also get a notification via Telegram and/or Slack if configured. If you've made changes and need to restart use `pm2 restart sui-watcher-mainnet`
+
+You can make additional copies of the pm2 config file for additional targets you want to monitor.
 
 ## Configurable parameters
 
