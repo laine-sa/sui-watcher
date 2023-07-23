@@ -115,7 +115,7 @@ export class Watcher {
                             last_observed: new Date(),
                             end: null,
                             type: 'metrics_connection_error',
-                            message: 'Unable to fetch metrics: '+error_value,
+                            message: 'Unable to fetch metrics from '+this.target+': '+error_value,
                             count: 0,
                             notified: false,
                             resolved: false,
