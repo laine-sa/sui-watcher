@@ -30,7 +30,7 @@ export class Notifier  {
 
     public async monitor(failures: Failure[]): Promise<void> {
         this.logger.info('Notifier running')
-        failures.every((failure,i) => {
+        failures.forEach((failure,i) => {
             if(!failure.notified && !failure.resolved && failure.count >= ALERT_THRESHOLD) {
                 let failure_message = failure.message
                 +'\r\n'+
@@ -163,6 +163,12 @@ export class Notifier  {
                 headers: {
                     'Content-Type': 'application/json'
                 }
+            })
+            .then((response) => {
+                this.logger.trace('Notifier notified Telegram')
+            })
+            .catch((error) => {
+                this.logger.error('Notifier failed to notify Telegram: '+error)
             })
         }
     }

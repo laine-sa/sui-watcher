@@ -6,5 +6,7 @@ export enum Metric {
     certificates_committed,
     highest_known_checkpoint,
     highest_synced_checkpoint,
-    highest_verified_checkpoint
+    highest_verified_checkpoint,
+    authority_state_execute_certificate_latency_count_shared,
+    authority_state_execute_certificate_latency_count_single_writer
 }
