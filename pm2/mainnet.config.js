@@ -8,7 +8,7 @@ module.exports = {
           name: "sui-watcher-mainnet",
           script: "./pm2/pm2-start.sh",
           env: {
-            "TARGET": "{YOUR_MAINNET_METRICS_ENDPOINT URL}",
+            "TARGET": "http://sui-mainnet.laine.one:918/metrics",
           }
         }
     ]
